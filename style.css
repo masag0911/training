@@ -491,10 +491,12 @@ textarea {
 }
 
 .table-wrap {
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(3, 8, 14, 0.32);
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -599,11 +601,13 @@ tr:last-child td {
 .daily-detail-list {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .daily-detail-group {
   display: grid;
   gap: 12px;
+  min-width: 0;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -678,11 +682,14 @@ tr:last-child td {
 
 .daily-category-grid {
   display: block;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .daily-category {
   display: none;
   min-width: 0;
+  max-width: 100%;
 }
 
 .daily-category.active {
