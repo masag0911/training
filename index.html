@@ -17,6 +17,7 @@
       <button class="tab-btn active" type="button" data-page-target="mainPage">メイン</button>
       <button class="tab-btn" type="button" data-page-target="detailPage">詳細</button>
       <button class="tab-btn" type="button" data-page-target="goalPage">目標</button>
+      <button class="tab-btn tools-tab" type="button" data-page-target="otherPage">その他</button>
     </nav>
     <div class="header-actions">
       <div class="sync-controls" aria-label="同期">
@@ -25,12 +26,6 @@
         <button class="secondary-btn" type="button" id="syncNowBtn" hidden>Sync</button>
         <button class="secondary-btn" type="button" id="logoutBtn" hidden>Logout</button>
       </div>
-      <button class="secondary-btn export-action" id="exportJsonBtn">JSON</button>
-      <button class="secondary-btn export-action" id="exportCsvBtn">CSV</button>
-      <label class="secondary-btn file-btn export-action">
-        Import
-        <input type="file" id="importJsonInput" accept="application/json">
-      </label>
     </div>
   </header>
 
@@ -255,6 +250,23 @@
           </div>
           <button class="primary-btn full" type="submit">目標を保存</button>
         </form>
+      </section>
+    </section>
+
+    <section class="page tools-page" id="otherPage" hidden>
+      <section class="panel tools-panel">
+        <div class="section-title">
+          <h2>その他</h2>
+          <p>データの書き出し・読み込み</p>
+        </div>
+        <div class="tools-grid">
+          <button class="secondary-btn" id="exportJsonBtn" type="button">JSON</button>
+          <button class="secondary-btn" id="exportCsvBtn" type="button">CSV</button>
+          <label class="secondary-btn file-btn">
+            Import
+            <input type="file" id="importJsonInput" accept="application/json">
+          </label>
+        </div>
       </section>
     </section>
 

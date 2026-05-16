@@ -202,6 +202,7 @@ function bindEvents() {
   $("#loginBackBtn").addEventListener("click", () => switchPage("mainPage"));
   $("#logoutBtn").addEventListener("click", logout);
   $("#syncNowBtn").addEventListener("click", () => loadCloudData({ merge: true, silent: false }));
+  window.addEventListener("resize", handleResponsivePage);
 
   document.querySelectorAll("[data-jump]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -618,6 +619,9 @@ function renderTodayPreview() {
 }
 
 function switchPage(pageId) {
+  if (pageId === "otherPage" && isMobileViewport()) {
+    pageId = "mainPage";
+  }
   document.querySelectorAll(".page").forEach((page) => {
     const isActive = page.id === pageId;
     page.classList.toggle("active", isActive);
@@ -632,6 +636,16 @@ function switchPage(pageId) {
     renderDailyDetails();
     renderCharts();
   }
+}
+
+function handleResponsivePage() {
+  if (isMobileViewport() && $("#otherPage").classList.contains("active")) {
+    switchPage("mainPage");
+  }
+}
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 767px)").matches;
 }
 
 function switchInputMode(formId) {
