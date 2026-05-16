@@ -21,14 +21,13 @@
     <div class="header-actions">
       <div class="sync-controls" aria-label="同期">
         <span class="sync-status" id="syncStatus">Local</span>
-        <input class="auth-email" type="email" id="authEmail" placeholder="email@example.com" autocomplete="email">
-        <button class="secondary-btn" type="button" id="loginBtn">Login</button>
+        <button class="secondary-btn" type="button" id="loginBtn">ログイン</button>
         <button class="secondary-btn" type="button" id="syncNowBtn" hidden>Sync</button>
         <button class="secondary-btn" type="button" id="logoutBtn" hidden>Logout</button>
       </div>
-      <button class="secondary-btn" id="exportJsonBtn">JSON</button>
-      <button class="secondary-btn" id="exportCsvBtn">CSV</button>
-      <label class="secondary-btn file-btn">
+      <button class="secondary-btn export-action" id="exportJsonBtn">JSON</button>
+      <button class="secondary-btn export-action" id="exportCsvBtn">CSV</button>
+      <label class="secondary-btn file-btn export-action">
         Import
         <input type="file" id="importJsonInput" accept="application/json">
       </label>
@@ -255,6 +254,28 @@
             <label>懸垂目標 回<input type="number" id="goalPullUps" value="10"></label>
           </div>
           <button class="primary-btn full" type="submit">目標を保存</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="page login-page" id="loginPage" hidden>
+      <section class="login-hero" aria-label="ログイン">
+        <div class="login-motion" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="login-copy">
+          <p class="eyebrow">Cloud Sync</p>
+          <h2>記録をクラウドに同期</h2>
+          <p>メールリンクでログインして、食事・体重・支出の記録を保存します。</p>
+        </div>
+        <form class="login-card" id="loginForm">
+          <label>メールアドレス
+            <input class="auth-email" type="email" id="authEmail" placeholder="email@example.com" autocomplete="email" required>
+          </label>
+          <button class="primary-btn full" type="submit">ログインメールを送信</button>
+          <button class="secondary-btn full" type="button" id="loginBackBtn">メインに戻る</button>
         </form>
       </section>
     </section>

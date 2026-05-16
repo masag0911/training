@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
 const SUPABASE_URL = "https://jgzrwnrnvmpvdsgdhupc.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnenJ3bnJudm1wdmRzZ2RodXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDc1MjcsImV4cCI6MjA5NDUyMzUyN30.ZyiXX1B7YTtXjLZPkL3vgj7SmxEQwjJIuYVqBrEgzws";
 const CLOUD_TABLE = "tracker_data";
+const PUBLIC_SITE_URL = "https://masag0911.github.io/training/";
 
 const DEFAULT_GOALS = {
   goalWeight: 75,
@@ -196,7 +197,9 @@ function bindEvents() {
   $("#exportJsonBtn").addEventListener("click", exportJson);
   $("#exportCsvBtn").addEventListener("click", exportCsv);
   $("#importJsonInput").addEventListener("change", importJson);
-  $("#loginBtn").addEventListener("click", loginWithEmail);
+  $("#loginBtn").addEventListener("click", () => switchPage("loginPage"));
+  $("#loginForm").addEventListener("submit", loginWithEmail);
+  $("#loginBackBtn").addEventListener("click", () => switchPage("mainPage"));
   $("#logoutBtn").addEventListener("click", logout);
   $("#syncNowBtn").addEventListener("click", () => loadCloudData({ merge: true, silent: false }));
 
@@ -270,16 +273,19 @@ async function applySession(session) {
 
 function renderAuthState() {
   const signedIn = Boolean(state.user);
-  $("#authEmail").hidden = signedIn;
   $("#loginBtn").hidden = signedIn;
   $("#syncNowBtn").hidden = !signedIn;
   $("#logoutBtn").hidden = !signedIn;
   if (signedIn) {
     $("#authEmail").value = state.user.email || "";
+    if ($("#loginPage").classList.contains("active")) {
+      switchPage("mainPage");
+    }
   }
 }
 
-async function loginWithEmail() {
+async function loginWithEmail(event) {
+  event.preventDefault();
   if (!supabaseClient) {
     toast("Supabaseを読み込めませんでした");
     return;
@@ -292,7 +298,7 @@ async function loginWithEmail() {
   }
 
   setSyncStatus("Login mail");
-  const redirectTo = window.location.href.split("#")[0];
+  const redirectTo = getAuthRedirectUrl();
   const { error } = await supabaseClient.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: redirectTo }
@@ -300,12 +306,21 @@ async function loginWithEmail() {
 
   if (error) {
     setSyncStatus("Login error");
-    toast("ログインメールの送信に失敗しました");
+    console.error("Supabase login error", error);
+    toast(`ログイン失敗: ${error.message || "メール送信に失敗しました"}`);
     return;
   }
 
   setSyncStatus("Check mail");
   toast("ログインメールを送信しました");
+}
+
+function getAuthRedirectUrl() {
+  if (window.location.protocol === "file:") {
+    return PUBLIC_SITE_URL;
+  }
+
+  return window.location.href.split("#")[0];
 }
 
 async function logout() {

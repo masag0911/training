@@ -138,7 +138,7 @@ h2 {
 }
 
 .auth-email {
-  width: min(220px, 42vw);
+  width: min(320px, 100%);
   min-height: 40px;
 }
 
@@ -701,6 +701,109 @@ tr:last-child td {
   transform: translateY(0);
 }
 
+.login-page {
+  min-height: calc(100vh - 96px);
+}
+
+.login-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+  align-items: center;
+  gap: clamp(22px, 5vw, 68px);
+  min-height: min(720px, calc(100vh - 132px));
+  overflow: hidden;
+  padding: clamp(28px, 6vw, 72px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(120deg, rgba(255, 61, 0, 0.18), transparent 34%),
+    linear-gradient(300deg, rgba(25, 211, 255, 0.2), transparent 38%),
+    rgba(8, 13, 23, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.login-hero::before {
+  position: absolute;
+  inset: -20%;
+  content: "";
+  background:
+    repeating-linear-gradient(115deg, transparent 0 32px, rgba(255, 255, 255, 0.055) 33px 34px),
+    linear-gradient(90deg, transparent, rgba(255, 209, 102, 0.12), transparent);
+  transform: translateX(-12%);
+  animation: loginScan 8s ease-in-out infinite alternate;
+}
+
+.login-copy,
+.login-card,
+.login-motion {
+  position: relative;
+  z-index: 1;
+}
+
+.login-copy {
+  max-width: 640px;
+}
+
+.login-copy h2 {
+  margin-bottom: 12px;
+  font-size: clamp(2.2rem, 7vw, 5.4rem);
+  line-height: 0.96;
+}
+
+.login-copy p:not(.eyebrow) {
+  max-width: 520px;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+}
+
+.login-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(5, 9, 16, 0.78);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+  animation: loginCardIn 0.55s ease both;
+}
+
+.login-card .auth-email {
+  width: 100%;
+}
+
+.login-motion {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.login-motion span {
+  position: absolute;
+  right: -12%;
+  width: 46%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 209, 102, 0.86), transparent);
+  transform: rotate(-22deg);
+  animation: loginLine 4.8s linear infinite;
+}
+
+.login-motion span:nth-child(1) {
+  top: 22%;
+}
+
+.login-motion span:nth-child(2) {
+  top: 48%;
+  animation-delay: 1.2s;
+  background: linear-gradient(90deg, transparent, rgba(25, 211, 255, 0.72), transparent);
+}
+
+.login-motion span:nth-child(3) {
+  top: 72%;
+  animation-delay: 2.4s;
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -712,13 +815,47 @@ tr:last-child td {
   }
 }
 
+@keyframes loginScan {
+  from {
+    transform: translateX(-12%);
+  }
+  to {
+    transform: translateX(10%);
+  }
+}
+
+@keyframes loginLine {
+  from {
+    transform: translateX(0) rotate(-22deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-260%) rotate(-22deg);
+    opacity: 0;
+  }
+}
+
+@keyframes loginCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (max-width: 767px) {
   .app-header {
-    position: static;
-    grid-template-columns: 1fr;
-    align-items: stretch;
-    gap: 8px;
-    padding: 10px 14px 12px;
+    position: sticky;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
   }
 
   .header-actions,
@@ -734,10 +871,20 @@ tr:last-child td {
   }
 
   .brand-block {
-    text-align: center;
+    text-align: left;
+  }
+
+  .brand-block .eyebrow {
+    display: none;
+  }
+
+  h1 {
+    font-size: 0.95rem;
   }
 
   .page-tabs {
+    grid-column: 1 / -1;
+    order: 3;
     width: 100%;
     justify-content: center;
     gap: 0;
@@ -770,21 +917,28 @@ tr:last-child td {
   }
 
   .header-actions {
-    justify-content: center;
+    width: auto;
+    justify-content: flex-end;
   }
 
   .sync-controls {
-    justify-content: center;
+    justify-content: flex-end;
+    flex: 0 0 auto;
   }
 
+  .export-action,
   .sync-status {
-    flex: 1 1 100%;
-    justify-content: center;
+    display: none;
+  }
+
+  .sync-controls .secondary-btn {
+    min-height: 38px;
+    padding: 8px 11px;
+    font-size: 0.84rem;
   }
 
   .auth-email {
     width: 100%;
-    flex: 1 1 180px;
   }
 
   .dashboard-grid,
@@ -838,5 +992,24 @@ tr:last-child td {
 
   table {
     min-width: 720px;
+  }
+
+  .login-page {
+    min-height: auto;
+  }
+
+  .login-hero {
+    grid-template-columns: 1fr;
+    align-items: end;
+    min-height: calc(100vh - 158px);
+    padding: 24px 16px;
+  }
+
+  .login-copy h2 {
+    font-size: clamp(2.35rem, 15vw, 4.4rem);
+  }
+
+  .login-card {
+    padding: 16px;
   }
 }
