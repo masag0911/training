@@ -55,24 +55,6 @@
         </article>
       </section>
 
-      <section class="insight-strip" aria-label="進捗サマリー">
-        <article class="insight-card">
-          <span>7日平均</span>
-          <strong id="weekAvgCalories">0 kcal</strong>
-          <small id="weekAvgProtein">P 0g / day</small>
-        </article>
-        <article class="insight-card">
-          <span>体重進捗</span>
-          <strong id="weightProgressLabel">記録待ち</strong>
-          <div class="progress-track" aria-hidden="true"><span id="weightProgressBar"></span></div>
-        </article>
-        <article class="insight-card">
-          <span>食費予算</span>
-          <strong id="foodBudgetLabel">¥0 / ¥0</strong>
-          <div class="progress-track budget" aria-hidden="true"><span id="foodBudgetBar"></span></div>
-        </article>
-      </section>
-
       <section class="content-grid">
         <div class="panel input-hub highlight-panel">
           <div class="section-title">
@@ -109,7 +91,7 @@
             <button class="primary-btn full" type="submit">食事を追加</button>
           </form>
 
-          <form class="form-panel input-mode-panel" id="dailyForm">
+          <form class="form-panel input-mode-panel" id="dailyForm" hidden>
             <div class="form-grid">
               <label>日付<input type="date" id="recordDate" required></label>
               <label>体重 kg<input type="number" id="weight" min="0" step="0.1"></label>
@@ -120,7 +102,7 @@
             <button class="primary-btn alt full" type="submit">今日の記録を追加</button>
           </form>
 
-          <form class="form-panel input-mode-panel" id="purchaseForm">
+          <form class="form-panel input-mode-panel" id="purchaseForm" hidden>
             <div class="form-grid">
               <label>日付<input type="date" id="purchaseDate" required></label>
               <label>カテゴリー
@@ -171,7 +153,7 @@
       </section>
     </section>
 
-    <section class="page" id="detailPage">
+    <section class="page" id="detailPage" hidden>
       <section class="dashboard-grid" aria-label="詳細ダッシュボード">
         <article class="metric-card">
           <span>今月の食費</span>
@@ -215,7 +197,7 @@
         </div>
       </section>
 
-      <section class="detail-view-panel" data-detail-panel="charts">
+      <section class="detail-view-panel" data-detail-panel="charts" hidden>
         <div class="panel">
           <div class="section-title">
             <h2>グラフ</h2>
@@ -229,7 +211,7 @@
         </div>
       </section>
 
-      <section class="detail-view-panel" data-detail-panel="presets">
+      <section class="detail-view-panel" data-detail-panel="presets" hidden>
         <div class="panel">
           <div class="section-title">
             <h2>食品プリセット</h2>
@@ -256,7 +238,7 @@
       </section>
     </section>
 
-    <section class="page" id="goalPage">
+    <section class="page" id="goalPage" hidden>
       <section class="panel goal-panel">
         <div class="section-title">
           <h2>月別目標設定</h2>

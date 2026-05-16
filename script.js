@@ -551,20 +551,6 @@ function renderDashboard() {
   const todayTobacco = sum(todayPurchases.filter((purchase) => purchase.category === "たばこ"), "amount");
   const todayOther = todayExpense - todayFood - todayTobacco;
   const budgetRemain = goals.monthlyBudget - foodCost;
-  const weekAverage = averageMealsForLastDays(today, 7);
-  const monthWeights = state.records
-    .filter((record) => record.weight && record.date?.startsWith(goalMonth))
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const monthStartWeight = monthWeights[0]?.weight || latest?.weight || 0;
-  const weightDelta = latest && monthStartWeight ? latest.weight - monthStartWeight : 0;
-  const weightProgress = monthStartWeight && goals.goalWeight > monthStartWeight
-    ? clampPercent(((latest?.weight || monthStartWeight) - monthStartWeight) / (goals.goalWeight - monthStartWeight) * 100)
-    : latest?.weight
-      ? clampPercent((latest.weight / goals.goalWeight) * 100)
-      : 0;
-  const foodBudgetProgress = goals.monthlyBudget
-    ? clampPercent((foodCost / goals.monthlyBudget) * 100)
-    : 0;
 
   $("#todayCalories").textContent = `${round(todayTotals.calories)} kcal`;
   $("#todayProtein").textContent = `P ${round(todayTotals.protein)}g`;
@@ -578,14 +564,6 @@ function renderDashboard() {
   $("#strengthGoalSummary").textContent = `目標 ${goals.goalBench}kg / ${goals.goalPullUps}回`;
   $("#monthTotalCost").textContent = yen.format(totalCost);
   $("#currentMonthLabel").textContent = formatBillingPeriodLabel(billingMonth);
-  $("#weekAvgCalories").textContent = `${round(weekAverage.calories)} kcal`;
-  $("#weekAvgProtein").textContent = `P ${round(weekAverage.protein)}g / day`;
-  $("#weightProgressLabel").textContent = latest
-    ? `${latest.weight}kg（今月 ${formatSignedNumber(weightDelta)}kg）`
-    : "記録待ち";
-  $("#weightProgressBar").style.width = `${weightProgress}%`;
-  $("#foodBudgetLabel").textContent = `${yen.format(foodCost)} / ${yen.format(goals.monthlyBudget)}`;
-  $("#foodBudgetBar").style.width = `${foodBudgetProgress}%`;
 }
 
 function renderTodayPreview() {
@@ -626,7 +604,9 @@ function renderTodayPreview() {
 
 function switchPage(pageId) {
   document.querySelectorAll(".page").forEach((page) => {
-    page.classList.toggle("active", page.id === pageId);
+    const isActive = page.id === pageId;
+    page.classList.toggle("active", isActive);
+    page.hidden = !isActive;
   });
   document.querySelectorAll("[data-page-target]").forEach((button) => {
     button.classList.toggle("active", button.dataset.pageTarget === pageId);
@@ -641,7 +621,9 @@ function switchPage(pageId) {
 
 function switchInputMode(formId) {
   document.querySelectorAll(".input-mode-panel").forEach((panel) => {
-    panel.classList.toggle("active", panel.id === formId);
+    const isActive = panel.id === formId;
+    panel.classList.toggle("active", isActive);
+    panel.hidden = !isActive;
   });
   document.querySelectorAll("[data-input-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.inputMode === formId);
@@ -651,7 +633,9 @@ function switchInputMode(formId) {
 function switchDetailView(viewId) {
   state.detailView = viewId;
   document.querySelectorAll("[data-detail-panel]").forEach((panel) => {
-    panel.classList.toggle("active", panel.dataset.detailPanel === viewId);
+    const isActive = panel.dataset.detailPanel === viewId;
+    panel.classList.toggle("active", isActive);
+    panel.hidden = !isActive;
   });
   document.querySelectorAll("[data-detail-view]").forEach((button) => {
     button.classList.toggle("active", button.dataset.detailView === viewId);
@@ -1113,20 +1097,6 @@ function sumMeals(meals) {
   }), { calories: 0, protein: 0 });
 }
 
-function averageMealsForLastDays(endDateString, days) {
-  const totals = { calories: 0, protein: 0 };
-  for (let index = 0; index < days; index += 1) {
-    const date = offsetDateString(endDateString, -index);
-    const dailyTotal = sumMeals(state.meals.filter((meal) => meal.date === date));
-    totals.calories += dailyTotal.calories;
-    totals.protein += dailyTotal.protein;
-  }
-  return {
-    calories: totals.calories / days,
-    protein: totals.protein / days
-  };
-}
-
 function mealTypeRank(type) {
   const index = MEAL_TYPE_ORDER.indexOf(type);
   return index >= 0 ? index : MEAL_TYPE_ORDER.length;
@@ -1150,12 +1120,6 @@ function todayString() {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-}
-
-function offsetDateString(dateString, offsetDays) {
-  const [year, month, day] = dateString.split("-").map(Number);
-  const date = new Date(year, month - 1, day + offsetDays);
-  return dateStringFromParts(date.getFullYear(), date.getMonth() + 1, date.getDate());
 }
 
 function formatMonthLabel(month) {
@@ -1223,15 +1187,6 @@ function dateStringFromParts(year, month, day) {
 
 function round(value) {
   return Math.round((Number(value) || 0) * 10) / 10;
-}
-
-function clampPercent(value) {
-  return Math.min(100, Math.max(0, Number(value) || 0));
-}
-
-function formatSignedNumber(value) {
-  const rounded = round(value);
-  return rounded > 0 ? `+${rounded}` : String(rounded);
 }
 
 function csvCell(value) {

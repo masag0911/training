@@ -8,7 +8,6 @@
   --accent: #ff3d00;
   --accent-2: #ffd166;
   --accent-3: #19d3ff;
-  --success: #20d68b;
   --danger: #ff4d6d;
   --white: #ffffff;
   --shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
@@ -311,8 +310,7 @@ h2 {
 }
 
 .metric-card,
-.panel,
-.insight-card {
+.panel {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -351,51 +349,6 @@ h2 {
 .metric-card.warning {
   border-color: rgba(255, 209, 102, 0.55);
   box-shadow: 0 22px 70px rgba(255, 138, 0, 0.18);
-}
-
-.insight-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.insight-card {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-  padding: 14px;
-  background: rgba(10, 17, 29, 0.76);
-}
-
-.insight-card span,
-.insight-card small {
-  color: var(--muted);
-}
-
-.insight-card strong {
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
-  line-height: 1.2;
-}
-
-.progress-track {
-  height: 9px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.09);
-}
-
-.progress-track span {
-  display: block;
-  width: 0%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--success), var(--accent-3));
-  transition: width 0.25s ease;
-}
-
-.progress-track.budget span {
-  background: linear-gradient(90deg, var(--accent-2), var(--accent));
 }
 
 .panel {
@@ -835,7 +788,6 @@ tr:last-child td {
   }
 
   .dashboard-grid,
-  .insight-strip,
   .content-grid,
   .goal-grid,
   .list-filter-grid,
