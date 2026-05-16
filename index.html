@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Up Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Bulk Up Tracker</p>
+      <h1>筋トレ・増量・食事・支出管理</h1>
+    </div>
+    <div class="header-actions">
+      <button class="secondary-btn" id="exportJsonBtn">JSON</button>
+      <button class="secondary-btn" id="exportCsvBtn">CSV</button>
+      <label class="secondary-btn file-btn">
+        Import
+        <input type="file" id="importJsonInput" accept="application/json">
+      </label>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <nav class="page-tabs" aria-label="ページ切り替え">
+      <button class="tab-btn active" type="button" data-page-target="mainPage">メイン</button>
+      <button class="tab-btn" type="button" data-page-target="detailPage">詳細</button>
+      <button class="tab-btn" type="button" data-page-target="goalPage">目標</button>
+    </nav>
+
+    <section class="page active" id="mainPage">
+      <section class="dashboard-grid main-dashboard" aria-label="今日のダッシュボード">
+        <article class="metric-card">
+          <span>今日の摂取カロリー</span>
+          <strong id="todayCalories">0 kcal</strong>
+          <small id="todayProtein">P 0g</small>
+        </article>
+        <article class="metric-card warning">
+          <span>今日の支出</span>
+          <strong id="todayExpense">¥0</strong>
+          <small id="todayExpenseDetail">食費 ¥0 / たばこ ¥0 / その他 ¥0</small>
+        </article>
+        <article class="metric-card">
+          <span>今月の総支出</span>
+          <strong id="monthTotalCost">¥0</strong>
+          <small id="currentMonthLabel"></small>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel input-hub highlight-panel">
+          <div class="section-title">
+            <h2>入力</h2>
+            <p>食事・記録・買い物を切り替え</p>
+          </div>
+          <div class="mode-tabs" aria-label="入力種別">
+            <button class="tab-btn active" type="button" data-input-mode="mealForm">食事</button>
+            <button class="tab-btn" type="button" data-input-mode="dailyForm">記録</button>
+            <button class="tab-btn" type="button" data-input-mode="purchaseForm">買い物</button>
+          </div>
+
+          <form class="form-panel input-mode-panel active" id="mealForm">
+            <div class="form-grid">
+              <label>日付<input type="date" id="mealDate" required></label>
+              <label>食事区分
+                <select id="mealType">
+                  <option>朝食</option>
+                  <option>昼食</option>
+                  <option>夕食</option>
+                  <option>間食</option>
+                  <option>プロテイン</option>
+                </select>
+              </label>
+              <label>食品プリセット
+                <select id="presetSelect">
+                  <option value="">手入力</option>
+                </select>
+              </label>
+              <label>食品名<input type="text" id="foodName" placeholder="例：白米 300g" required></label>
+              <label>カロリー kcal<input type="number" id="calories" min="0"></label>
+              <label>たんぱく質 g<input type="number" id="protein" min="0" step="0.1"></label>
+            </div>
+            <button class="primary-btn full" type="submit">食事を追加</button>
+          </form>
+
+          <form class="form-panel input-mode-panel" id="dailyForm">
+            <div class="form-grid">
+              <label>日付<input type="date" id="recordDate" required></label>
+              <label>体重 kg<input type="number" id="weight" min="0" step="0.1"></label>
+              <label>ベンチプレス kg<input type="number" id="benchPress" min="0" step="0.5"></label>
+              <label>懸垂 回<input type="number" id="pullUps" min="0"></label>
+              <label class="wide">メモ<textarea id="memo" rows="3" placeholder="トレーニング内容や体調"></textarea></label>
+            </div>
+            <button class="primary-btn alt full" type="submit">今日の記録を追加</button>
+          </form>
+
+          <form class="form-panel input-mode-panel" id="purchaseForm">
+            <div class="form-grid">
+              <label>日付<input type="date" id="purchaseDate" required></label>
+              <label>カテゴリー
+                <select id="purchaseCategory">
+                  <option>食費</option>
+                  <option>たばこ</option>
+                  <option>サプリ</option>
+                  <option>ジム</option>
+                  <option>その他</option>
+                </select>
+              </label>
+              <label>金額 円<input type="number" id="purchaseAmount" min="0" required></label>
+              <label>内容<input type="text" id="purchaseMemo" placeholder="例：スーパー、プロテイン、コンビニ"></label>
+            </div>
+            <button class="primary-btn full" type="submit">買い物を追加</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h2>今日の入力</h2>
+            <p id="todayPreviewDate"></p>
+          </div>
+          <div class="today-preview">
+            <h3>食事</h3>
+            <div class="table-wrap compact">
+              <table>
+                <thead><tr><th>区分</th><th>食品</th><th>kcal</th><th>P</th></tr></thead>
+                <tbody id="todayMealTable"></tbody>
+              </table>
+            </div>
+            <h3>支出</h3>
+            <div class="table-wrap compact">
+              <table>
+                <thead><tr><th>カテゴリー</th><th>金額</th><th>内容</th></tr></thead>
+                <tbody id="todayPurchaseTable"></tbody>
+              </table>
+            </div>
+            <h3>記録</h3>
+            <div class="table-wrap compact">
+              <table>
+                <thead><tr><th>体重</th><th>ベンチ</th><th>懸垂</th><th>メモ</th></tr></thead>
+                <tbody id="todayRecordTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" id="detailPage">
+      <section class="dashboard-grid" aria-label="詳細ダッシュボード">
+        <article class="metric-card">
+          <span>今月の食費</span>
+          <strong id="monthFoodCost">¥0</strong>
+          <small id="budgetStatus">予算未設定</small>
+        </article>
+        <article class="metric-card">
+          <span>最新体重</span>
+          <strong id="latestWeight">- kg</strong>
+          <small id="weightDiff">目標まで - kg</small>
+        </article>
+        <article class="metric-card">
+          <span>ベンチ / 懸垂</span>
+          <strong id="strengthSummary">- kg / - 回</strong>
+          <small id="strengthGoalSummary">目標 100kg / 10回</small>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel">
+          <div class="section-title">
+            <h2>食品プリセット</h2>
+            <p>よく食べるものを登録</p>
+          </div>
+          <form id="presetForm" class="preset-form">
+            <input type="hidden" id="presetId">
+            <input type="text" id="presetName" placeholder="食品名" required>
+            <input type="number" id="presetCalories" placeholder="kcal" min="0">
+            <input type="number" id="presetProtein" placeholder="P" min="0" step="0.1">
+            <button class="secondary-btn" type="submit">保存</button>
+          </form>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>食品</th><th>kcal</th><th>P</th><th></th></tr></thead>
+              <tbody id="presetTable"></tbody>
+            </table>
+          </div>
+          <div class="list-footer">
+            <span id="presetListStatus"></span>
+            <button class="secondary-btn small-btn" type="button" data-toggle-list="presets">全部一覧を開く</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h2>食事一覧</h2>
+            <p id="selectedMealDay"></p>
+          </div>
+          <div class="list-filter-grid compact-filter">
+            <label>対象月
+              <select data-list-month="meals"></select>
+            </label>
+          </div>
+          <div class="mini-stats">
+            <span id="dayCalories">0 kcal</span>
+            <span id="dayProtein">P 0g</span>
+          </div>
+          <div class="table-wrap compact">
+            <table>
+              <thead><tr><th>日付</th><th>区分</th><th>食品</th><th>kcal</th><th>P</th><th></th></tr></thead>
+              <tbody id="mealTable"></tbody>
+            </table>
+          </div>
+          <div class="list-footer">
+            <span id="mealListStatus"></span>
+            <button class="secondary-btn small-btn" type="button" data-toggle-list="meals">全部一覧を開く</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel">
+          <div class="section-title">
+            <h2>買い物一覧</h2>
+            <p>支出管理</p>
+          </div>
+          <div class="list-filter-grid compact-filter">
+            <label>対象月
+              <select data-list-month="purchases"></select>
+            </label>
+          </div>
+          <div class="table-wrap compact">
+            <table>
+              <thead><tr><th>日付</th><th>カテゴリー</th><th>金額</th><th>内容</th><th></th></tr></thead>
+              <tbody id="purchaseTable"></tbody>
+            </table>
+          </div>
+          <div class="list-footer">
+            <span id="purchaseListStatus"></span>
+            <button class="secondary-btn small-btn" type="button" data-toggle-list="purchases">全部一覧を開く</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">
+            <h2>記録一覧</h2>
+            <p>日別記録</p>
+          </div>
+          <div class="list-filter-grid compact-filter">
+            <label>対象月
+              <select data-list-month="records"></select>
+            </label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>日付</th><th>体重</th><th>ベンチ</th><th>懸垂</th><th>メモ</th><th></th></tr>
+              </thead>
+              <tbody id="recordTable"></tbody>
+            </table>
+          </div>
+          <div class="list-footer">
+            <span id="recordListStatus"></span>
+            <button class="secondary-btn small-btn" type="button" data-toggle-list="records">全部一覧を開く</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-title">
+          <h2>グラフ</h2>
+          <p>体重・摂取カロリー・支出の推移</p>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-box"><canvas id="weightChart"></canvas></div>
+          <div class="chart-box"><canvas id="calorieChart"></canvas></div>
+          <div class="chart-box"><canvas id="costChart"></canvas></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" id="goalPage">
+      <section class="panel goal-panel">
+        <div class="section-title">
+          <h2>月別目標設定</h2>
+          <p>1日〜月末で管理</p>
+        </div>
+        <form id="goalForm">
+          <div class="goal-grid">
+            <label>対象月
+              <select id="goalMonth"></select>
+            </label>
+            <label>目標体重 kg<input type="number" step="0.1" id="goalWeight" value="75"></label>
+            <label>月間食費予算 円<input type="number" id="monthlyBudget" value="45000"></label>
+            <label>ベンチ目標 kg<input type="number" step="0.5" id="goalBench" value="100"></label>
+            <label>懸垂目標 回<input type="number" id="goalPullUps" value="10"></label>
+          </div>
+          <button class="primary-btn full" type="submit">目標を保存</button>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
